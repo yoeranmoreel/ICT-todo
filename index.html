@@ -203,10 +203,77 @@
             font-size: 13px;
             margin-bottom: 20px;
         }
+
+        .install-banner {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .install-banner.show {
+            display: block;
+        }
+
+        .install-banner-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #212121;
+        }
+
+        .install-banner-text {
+            font-size: 13px;
+            color: #424242;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .install-banner-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .install-banner-btn {
+            padding: 8px 16px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .install-banner-btn:hover {
+            background: #1976d2;
+        }
+
+        .dismiss-btn {
+            background: white;
+            color: #424242;
+            border: 1px solid #bdbdbd;
+        }
+
+        .dismiss-btn:hover {
+            background: #f5f5f5;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Install Banner -->
+        <div id="installBanner" class="install-banner">
+            <div class="install-banner-title">📱 Installeer als app</div>
+            <div class="install-banner-text">
+                Installeer deze app op je bureaublad voor snelle toegang. Klik op de knop hieronder, 
+                of gebruik het menu (•••) → Apps → "Deze site installeren als app"
+            </div>
+            <div class="install-banner-buttons">
+                <button class="install-banner-btn" id="installBannerBtn">Nu installeren</button>
+                <button class="install-banner-btn dismiss-btn" id="dismissBtn">Later</button>
+            </div>
+        </div>
+
         <div class="header">
             <h1>Ambulante Dag To-Do</h1>
             <div class="day-selector">
@@ -241,6 +308,59 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeT7FjONd52J-IeeUyp-EQwo5OMDYS7lZa_0P-9yEpTC8x7MwnlxGDL6WXd55GZu_Hng/exec';
         
         let currentDay = 'woensdag';
+        let deferredPrompt = null;
+
+        // PWA Install handling
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Toon banner als nog niet eerder geïnstalleerd
+            if (!localStorage.getItem('pwaInstallDismissed')) {
+                document.getElementById('installBanner').classList.add('show');
+            }
+        });
+
+        // Check of al geïnstalleerd
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('installBanner').classList.remove('show');
+            localStorage.setItem('pwaInstallDismissed', 'true');
+        });
+
+        // Installeer knop
+        document.getElementById('installBannerBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                    console.log('PWA geïnstalleerd');
+                }
+                
+                deferredPrompt = null;
+                document.getElementById('installBanner').classList.remove('show');
+            } else {
+                // Fallback: toon instructies
+                alert('Open het menu (•••) rechtsboven → Apps → "Deze site installeren als app"');
+            }
+        });
+
+        // Later knop
+        document.getElementById('dismissBtn').addEventListener('click', () => {
+            document.getElementById('installBanner').classList.remove('show');
+            localStorage.setItem('pwaInstallDismissed', 'true');
+        });
+
+        // Toon banner altijd bij eerste bezoek (niet alleen met beforeinstallprompt)
+        if (!localStorage.getItem('pwaInstallDismissed') && !window.matchMedia('(display-mode: standalone)').matches) {
+            // Wacht 2 seconden voordat je banner toont
+            setTimeout(() => {
+                if (!deferredPrompt) {
+                    // Browser ondersteunt beforeinstallprompt niet, toon banner toch
+                    document.getElementById('installBanner').classList.add('show');
+                }
+            }, 2000);
+        }
 
         // API calls naar Apps Script
         async function apiCall(action, data = {}) {
