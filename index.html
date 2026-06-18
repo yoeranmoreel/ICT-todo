@@ -431,6 +431,10 @@
         <div id="errorMessage" class="error" style="display: none;"></div>
 
         <!-- Agenda View -->
+       <div id="weekNavigation" style="display:flex;justify-content:space-between;margin-bottom:20px;">
+    <button class="btn" onclick="previousWeek()">← Vorige week</button>
+    <button class="btn" onclick="nextWeek()">Volgende week →</button>
+</div>
         <div id="agendaView" class="agenda-grid"></div>
 
         <!-- Detail View -->
@@ -477,6 +481,7 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(app);
 
+        let weekOffset = 0; 
         let currentDay = 'woensdag';
         let unsubscribe = null;
         let allDaysData = {};
@@ -531,21 +536,26 @@
         }
 
         function getDayDate(day) {
-            const today = new Date();
-            const todayDay = today.getDay();
-            
-            const dayMap = { maandag: 1, dinsdag: 2, woensdag: 3, donderdag: 4, vrijdag: 5 };
-            const targetDay = dayMap[day];
-            
-            let daysOffset = (targetDay - todayDay + 7) % 7;
-            if (daysOffset === 0 && todayDay !== targetDay) {
-                daysOffset = 7;
-            }
-            
-            const date = new Date(today);
-            date.setDate(date.getDate() + daysOffset);
-            return date;
-        }
+    const today = new Date();
+    const todayDay = today.getDay();
+
+    const dayMap = {
+        maandag: 1,
+        dinsdag: 2,
+        woensdag: 3,
+        donderdag: 4,
+        vrijdag: 5
+    };
+
+    const targetDay = dayMap[day];
+
+    let daysOffset = (targetDay - todayDay + 7) % 7;
+
+    const date = new Date(today);
+    date.setDate(date.getDate() + daysOffset + (weekOffset * 7));
+
+    return date;
+}
 
         function loadAllDaysRealtime() {
             selectedDays.forEach(day => {
@@ -614,6 +624,7 @@
             currentDay = day;
             document.getElementById('agendaView').style.display = 'none';
             document.getElementById('detailView').classList.add('show');
+            document.getElementById('weekNavigation').style.display = 'none';
             
             const dayNames = { maandag: 'Maandag', dinsdag: 'Dinsdag', woensdag: 'Woensdag', donderdag: 'Donderdag', vrijdag: 'Vrijdag' };
             document.getElementById('detailTitle').textContent = dayNames[day];
@@ -624,6 +635,7 @@
         function showAgenda() {
             document.getElementById('agendaView').style.display = 'grid';
             document.getElementById('detailView').classList.remove('show');
+            document.getElementById('weekNavigation').style.display = 'flex';
             
             if (unsubscribe) unsubscribe();
         }
@@ -718,6 +730,16 @@
             if (e.key === 'Enter') addTask();
         });
 
+        function previousWeek() {
+    weekOffset--;
+    renderAgenda();
+}
+
+function nextWeek() {
+    weekOffset++;
+    renderAgenda();
+}
+
         window.toggleTask = toggleTask;
         window.deleteTask = deleteTask;
         window.showAgenda = showAgenda;
@@ -725,6 +747,8 @@
         window.openSettings = openSettings;
         window.closeSettings = closeSettings;
         window.saveSettings = saveSettings;
+        window.previousWeek = previousWeek;
+        window.nextWeek = nextWeek;
 
         // Initialize
         loadSettings();
