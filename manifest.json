@@ -2,15 +2,26 @@
   "name": "Ambulante Dag To-Do",
   "short_name": "Todo",
   "description": "To-do lijst voor ambulante dagen",
-  "start_url": "/",
-  "scope": "/",
+
+  "start_url": "./",
+  "scope": "./",
+
   "display": "standalone",
+
   "background_color": "#ffffff",
   "theme_color": "#212121",
+
+  "orientation": "portrait",
+
   "icons": [
     {
       "src": "icon-128.png",
       "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
       "type": "image/png"
     },
     {
