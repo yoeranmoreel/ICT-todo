@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -29,47 +29,206 @@
             padding: 24px;
             border: 1px solid #e0e0e0;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         h1 {
             color: #212121;
             font-size: 24px;
             font-weight: 600;
-            margin-bottom: 20px;
         }
 
-        .day-selector {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .day-btn {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #bdbdbd;
-            background: white;
+        .settings-btn {
+            padding: 8px 16px;
+            background: #212121;
+            color: white;
+            border: none;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            transition: all 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: #424242;
+        }
+
+        /* Settings Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #212121;
+        }
+
+        .day-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
             color: #424242;
         }
 
-        .day-btn:hover {
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-buttons .btn {
+            padding: 10px 20px;
+        }
+
+        .agenda-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .day-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .day-card:hover {
+            border-color: #424242;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-card.active {
+            border: 2px solid #212121;
             background: #fafafa;
-            border-color: #757575;
         }
 
-        .day-btn.active {
-            background: #212121;
+        .day-card-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-card-title {
+            font-weight: 600;
+            color: #212121;
+            font-size: 16px;
+        }
+
+        .day-card-date {
+            font-size: 12px;
+            color: #9e9e9e;
+            margin-top: 4px;
+        }
+
+        .flag-indicator {
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
             color: white;
-            border-color: #212121;
+            font-weight: 600;
         }
 
-        .date-display {
-            color: #757575;
+        .day-card-content {
+            padding: 16px;
+        }
+
+        .day-summary {
             font-size: 13px;
+            color: #757575;
+            margin-bottom: 12px;
+        }
+
+        .summary-bar {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .summary-bar-fill {
+            height: 100%;
+            background: #4caf50;
+            transition: width 0.3s;
+        }
+
+        .detail-view {
+            display: none;
+        }
+
+        .detail-view.show {
+            display: block;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .detail-back {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .detail-back:hover {
+            background: #f5f5f5;
         }
 
         .add-task-form {
@@ -204,240 +363,336 @@
             margin-bottom: 20px;
         }
 
-        .install-banner {
-            background: #e3f2fd;
-            border: 1px solid #2196f3;
-            padding: 16px;
-            margin-bottom: 20px;
-            display: none;
+        .sync-indicator {
+            font-size: 12px;
+            color: #9e9e9e;
+            text-align: right;
+            margin-top: 8px;
         }
 
-        .install-banner.show {
-            display: block;
+        .sync-indicator.syncing {
+            color: #2196f3;
         }
 
-        .install-banner-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #212121;
+        .today-indicator {
+            border: 2px solid #4caf50 !important;
         }
 
-        .install-banner-text {
-            font-size: 13px;
-            color: #424242;
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-
-        .install-banner-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .install-banner-btn {
-            padding: 8px 16px;
-            background: #2196f3;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .install-banner-btn:hover {
-            background: #1976d2;
-        }
-
-        .dismiss-btn {
-            background: white;
-            color: #424242;
-            border: 1px solid #bdbdbd;
-        }
-
-        .dismiss-btn:hover {
-            background: #f5f5f5;
+        .past-indicator {
+            opacity: 0.6;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Install Banner -->
-        <div id="installBanner" class="install-banner">
-            <div class="install-banner-title">📱 Installeer als app</div>
-            <div class="install-banner-text">
-                Installeer deze app op je bureaublad voor snelle toegang. Klik op de knop hieronder, 
-                of gebruik het menu (•••) → Apps → "Deze site installeren als app"
-            </div>
-            <div class="install-banner-buttons">
-                <button class="install-banner-btn" id="installBannerBtn">Nu installeren</button>
-                <button class="install-banner-btn dismiss-btn" id="dismissBtn">Later</button>
-            </div>
-        </div>
-
         <div class="header">
             <h1>Ambulante Dag To-Do</h1>
-            <div class="day-selector">
-                <button class="day-btn" data-day="woensdag">Woensdag</button>
-                <button class="day-btn" data-day="donderdag">Donderdag</button>
-                <button class="day-btn" data-day="vrijdag">Vrijdag</button>
+            <button class="settings-btn" onclick="openSettings()">Instellingen</button>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-title">Selecteer je ICT-dagen</div>
+                <div class="day-checkboxes">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="day-maandag" value="maandag">
+                        <label for="day-maandag">Maandag</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="day-dinsdag" value="dinsdag">
+                        <label for="day-dinsdag">Dinsdag</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="day-woensdag" value="woensdag">
+                        <label for="day-woensdag">Woensdag</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="day-donderdag" value="donderdag">
+                        <label for="day-donderdag">Donderdag</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="day-vrijdag" value="vrijdag">
+                        <label for="day-vrijdag">Vrijdag</label>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn" style="background: #bdbdbd;" onclick="closeSettings()">Annuleer</button>
+                    <button class="btn" onclick="saveSettings()">Opslaan</button>
+                </div>
             </div>
-            <div class="date-display" id="dateDisplay"></div>
         </div>
 
         <div id="errorMessage" class="error" style="display: none;"></div>
 
-        <div class="add-task-form">
-            <div class="input-group">
-                <input type="text" id="taskInput" placeholder="Nieuwe taak toevoegen...">
-                <button class="btn" id="addBtn">Toevoegen</button>
-            </div>
-        </div>
+        <!-- Agenda View -->
+        <div id="agendaView" class="agenda-grid"></div>
 
-        <div class="tasks-container">
-            <div class="loading" id="loading">Taken laden...</div>
-            <ul class="task-list" id="taskList"></ul>
-            <div class="empty-state" id="emptyState" style="display: none;">
-                Geen taken voor deze dag
+        <!-- Detail View -->
+        <div id="detailView" class="detail-view">
+            <div class="detail-header">
+                <button class="detail-back" onclick="showAgenda()">← Terug</button>
+                <h2 id="detailTitle" style="color: #212121; font-size: 20px; flex: 1; text-align: center;"></h2>
+                <div style="width: 100px;"></div>
             </div>
-            <div class="stats" id="stats"></div>
+
+            <div class="add-task-form">
+                <div class="input-group">
+                    <input type="text" id="taskInput" placeholder="Nieuwe taak toevoegen...">
+                    <button class="btn" id="addBtn">Toevoegen</button>
+                </div>
+            </div>
+
+            <div class="tasks-container">
+                <div class="loading" id="loading">Taken laden...</div>
+                <ul class="task-list" id="taskList"></ul>
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    Geen taken voor deze dag
+                </div>
+                <div class="stats" id="stats"></div>
+                <div class="sync-indicator" id="syncIndicator"></div>
+            </div>
         </div>
     </div>
 
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+
     <script>
-        // PAS DIT AAN NAAR JOUW APPS SCRIPT URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeT7FjONd52J-IeeUyp-EQwo5OMDYS7lZa_0P-9yEpTC8x7MwnlxGDL6WXd55GZu_Hng/exec';
-        
+        const firebaseConfig = {
+           const firebaseConfig = {
+  apiKey: "AIzaSyD9w-uzVhuvfIR5_UH-xcMKJPAlpx5fKRk",
+  authDomain: "aanwezigheid-app.firebaseapp.com",
+  projectId: "aanwezigheid-app",
+  storageBucket: "aanwezigheid-app.firebasestorage.app",
+  messagingSenderId: "188437676924",
+  appId: "1:188437676924:web:194eb53f7c6eb40ec3daf9",
+  measurementId: "G-V8WM335NFL"
+};
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+
         let currentDay = 'woensdag';
-        let deferredPrompt = null;
+        let unsubscribe = null;
+        let allDaysData = {};
+        let selectedDays = ['woensdag', 'donderdag', 'vrijdag'];
 
-        // PWA Install handling
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
+        // Load settings
+        function loadSettings() {
+            const saved = localStorage.getItem('ictDays');
+            if (saved) {
+                selectedDays = JSON.parse(saved);
+            }
+            allDaysData = {};
+            selectedDays.forEach(day => {
+                allDaysData[day] = [];
+            });
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('show');
+            selectedDays.forEach(day => {
+                document.getElementById('day-' + day).checked = true;
+            });
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('show');
+        }
+
+        function saveSettings() {
+            const checked = Array.from(document.querySelectorAll('.day-checkboxes input:checked'))
+                .map(el => el.value);
             
-            // Toon banner als nog niet eerder geïnstalleerd
-            if (!localStorage.getItem('pwaInstallDismissed')) {
-                document.getElementById('installBanner').classList.add('show');
+            if (checked.length === 0) {
+                alert('Selecteer minstens één dag!');
+                return;
             }
-        });
+            
+            selectedDays = checked.sort((a, b) => {
+                const dayOrder = { maandag: 0, dinsdag: 1, woensdag: 2, donderdag: 3, vrijdag: 4 };
+                return dayOrder[a] - dayOrder[b];
+            });
+            
+            localStorage.setItem('ictDays', JSON.stringify(selectedDays));
+            allDaysData = {};
+            selectedDays.forEach(day => {
+                allDaysData[day] = [];
+            });
+            
+            closeSettings();
+            loadAllDaysRealtime();
+            renderAgenda();
+        }
 
-        // Check of al geïnstalleerd
-        window.addEventListener('appinstalled', () => {
-            document.getElementById('installBanner').classList.remove('show');
-            localStorage.setItem('pwaInstallDismissed', 'true');
-        });
-
-        // Installeer knop
-        document.getElementById('installBannerBtn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                
-                if (outcome === 'accepted') {
-                    console.log('PWA geïnstalleerd');
-                }
-                
-                deferredPrompt = null;
-                document.getElementById('installBanner').classList.remove('show');
-            } else {
-                // Fallback: toon instructies
-                alert('Open het menu (•••) rechtsboven → Apps → "Deze site installeren als app"');
+        function getDayDate(day) {
+            const today = new Date();
+            const todayDay = today.getDay();
+            
+            const dayMap = { maandag: 1, dinsdag: 2, woensdag: 3, donderdag: 4, vrijdag: 5 };
+            const targetDay = dayMap[day];
+            
+            let daysOffset = (targetDay - todayDay + 7) % 7;
+            if (daysOffset === 0 && todayDay !== targetDay) {
+                daysOffset = 7;
             }
-        });
-
-        // Later knop
-        document.getElementById('dismissBtn').addEventListener('click', () => {
-            document.getElementById('installBanner').classList.remove('show');
-            localStorage.setItem('pwaInstallDismissed', 'true');
-        });
-
-        // Toon banner altijd bij eerste bezoek (niet alleen met beforeinstallprompt)
-        if (!localStorage.getItem('pwaInstallDismissed') && !window.matchMedia('(display-mode: standalone)').matches) {
-            // Wacht 2 seconden voordat je banner toont
-            setTimeout(() => {
-                if (!deferredPrompt) {
-                    // Browser ondersteunt beforeinstallprompt niet, toon banner toch
-                    document.getElementById('installBanner').classList.add('show');
-                }
-            }, 2000);
+            
+            const date = new Date(today);
+            date.setDate(date.getDate() + daysOffset);
+            return date;
         }
 
-        // API calls naar Apps Script
-        async function apiCall(action, data = {}) {
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Belangrijk voor Apps Script!
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ action, day: currentDay, ...data })
-                });
-                
-                // no-cors betekent dat we geen response kunnen lezen,
-                // dus we doen een GET om de data op te halen
-                if (action !== 'getTasks') {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    return await getTasks();
-                }
-                
-                // Voor GET requests
-                const getResponse = await fetch(`${SCRIPT_URL}?day=${currentDay}`);
-                const result = await getResponse.json();
-                return result.tasks || [];
-            } catch (error) {
-                console.error('API Error:', error);
-                showError('Fout bij verbinden met Google Sheets');
-                return [];
-            }
+        function loadAllDaysRealtime() {
+            selectedDays.forEach(day => {
+                db.collection('ambulante_taken')
+                    .doc(day)
+                    .onSnapshot((doc) => {
+                        if (doc.exists) {
+                            allDaysData[day] = doc.data().tasks || [];
+                        } else {
+                            allDaysData[day] = [];
+                        }
+                        renderAgenda();
+                    });
+            });
         }
 
-        async function getTasks() {
-            return await apiCall('getTasks');
+        function renderAgenda() {
+            const agendaGrid = document.getElementById('agendaView');
+            agendaGrid.innerHTML = '';
+
+            selectedDays.forEach(day => {
+                const tasks = allDaysData[day] || [];
+                const incomplete = tasks.filter(t => !t.completed).length;
+                const complete = tasks.filter(t => t.completed).length;
+                const total = tasks.length;
+                const percentage = total > 0 ? Math.round((complete / total) * 100) : 0;
+
+                const dayDate = getDayDate(day);
+                const dateStr = dayDate.toLocaleDateString('nl-NL', { month: 'short', day: 'numeric' });
+                const isToday = new Date().toDateString() === dayDate.toDateString();
+                const isPast = dayDate < new Date() && !isToday;
+
+                let classNames = 'day-card';
+                if (isPast && incomplete > 0) classNames += ' past-indicator';
+                if (isToday) classNames += ' today-indicator';
+                if (currentDay === day) classNames += ' active';
+
+                const dayNames = { maandag: 'Maandag', dinsdag: 'Dinsdag', woensdag: 'Woensdag', donderdag: 'Donderdag', vrijdag: 'Vrijdag' };
+
+                const card = document.createElement('div');
+                card.className = classNames;
+                card.onclick = () => showDetail(day);
+                card.innerHTML = `
+                    <div class="day-card-header">
+                        <div>
+                            <div class="day-card-title">${dayNames[day]}</div>
+                            <div class="day-card-date">${dateStr}</div>
+                        </div>
+                        ${incomplete > 0 ? `<div class="flag-indicator">${incomplete}</div>` : ''}
+                    </div>
+                    <div class="day-card-content">
+                        <div class="day-summary">
+                            ${total === 0 ? 'Geen taken' : `${complete}/${total} voltooid`}
+                        </div>
+                        <div class="summary-bar">
+                            <div class="summary-bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+
+                agendaGrid.appendChild(card);
+            });
         }
 
-        async function saveTasks(tasks) {
-            await apiCall('saveTasks', { tasks });
+        function showDetail(day) {
+            currentDay = day;
+            document.getElementById('agendaView').style.display = 'none';
+            document.getElementById('detailView').classList.add('show');
+            
+            const dayNames = { maandag: 'Maandag', dinsdag: 'Dinsdag', woensdag: 'Woensdag', donderdag: 'Donderdag', vrijdag: 'Vrijdag' };
+            document.getElementById('detailTitle').textContent = dayNames[day];
+
+            loadTasksRealtime();
         }
 
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            setTimeout(() => errorDiv.style.display = 'none', 5000);
+        function showAgenda() {
+            document.getElementById('agendaView').style.display = 'grid';
+            document.getElementById('detailView').classList.remove('show');
+            
+            if (unsubscribe) unsubscribe();
         }
 
-        // Render functions
-        function updateDateDisplay() {
-            const days = {
-                'woensdag': 'Woensdag',
-                'donderdag': 'Donderdag',
-                'vrijdag': 'Vrijdag'
-            };
-            document.getElementById('dateDisplay').textContent = `Planning voor ${days[currentDay]}`;
-        }
-
-        async function renderTasks() {
+        async function loadTasksRealtime() {
             const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+
+            if (unsubscribe) unsubscribe();
+
+            unsubscribe = db.collection('ambulante_taken')
+                .doc(currentDay)
+                .onSnapshot((doc) => {
+                    loading.style.display = 'none';
+                    renderTasks(doc.exists ? doc.data().tasks || [] : []);
+                });
+        }
+
+        async function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            const doc = await db.collection('ambulante_taken').doc(currentDay).get();
+            const tasks = doc.exists ? doc.data().tasks || [] : [];
+            
+            tasks.push({ 
+                text, 
+                completed: false, 
+                timestamp: Date.now()
+            });
+            
+            await db.collection('ambulante_taken').doc(currentDay).set({ tasks }, { merge: true });
+            input.value = '';
+        }
+
+        async function toggleTask(index) {
+            const doc = await db.collection('ambulante_taken').doc(currentDay).get();
+            const tasks = doc.exists ? doc.data().tasks || [] : [];
+            
+            if (tasks[index]) {
+                tasks[index].completed = !tasks[index].completed;
+                await db.collection('ambulante_taken').doc(currentDay).set({ tasks }, { merge: true });
+            }
+        }
+
+        async function deleteTask(index) {
+            if (!confirm('Weet je zeker dat je deze taak wilt verwijderen?')) return;
+            
+            const doc = await db.collection('ambulante_taken').doc(currentDay).get();
+            const tasks = doc.exists ? doc.data().tasks || [] : [];
+            
+            tasks.splice(index, 1);
+            await db.collection('ambulante_taken').doc(currentDay).set({ tasks }, { merge: true });
+        }
+
+        function renderTasks(tasks) {
             const taskList = document.getElementById('taskList');
             const emptyState = document.getElementById('emptyState');
             const stats = document.getElementById('stats');
-            
-            loading.style.display = 'block';
-            taskList.style.display = 'none';
-            emptyState.style.display = 'none';
-
-            const tasks = await getTasks();
-            
-            loading.style.display = 'none';
 
             if (tasks.length === 0) {
+                taskList.style.display = 'none';
                 emptyState.style.display = 'block';
                 stats.innerHTML = '';
                 return;
             }
 
             taskList.style.display = 'block';
+            emptyState.style.display = 'none';
+
             taskList.innerHTML = tasks.map((task, index) => `
                 <li class="task-item ${task.completed ? 'completed' : ''}">
                     <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} 
@@ -455,62 +710,28 @@
             `;
         }
 
-        // Task functions
-        async function addTask() {
-            const input = document.getElementById('taskInput');
-            const text = input.value.trim();
-
-            if (!text) return;
-
-            const tasks = await getTasks();
-            tasks.push({ text, completed: false, timestamp: Date.now() });
-            await saveTasks(tasks);
-            
-            input.value = '';
-            renderTasks();
-        }
-
-        async function toggleTask(index) {
-            const tasks = await getTasks();
-            tasks[index].completed = !tasks[index].completed;
-            await saveTasks(tasks);
-            renderTasks();
-        }
-
-        async function deleteTask(index) {
-            if (!confirm('Weet je zeker dat je deze taak wilt verwijderen?')) return;
-            
-            const tasks = await getTasks();
-            tasks.splice(index, 1);
-            await saveTasks(tasks);
-            renderTasks();
-        }
-
-        // Day selector
-        document.querySelectorAll('.day-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentDay = btn.dataset.day;
-                updateDateDisplay();
-                renderTasks();
-            });
-        });
-
-        // Event listeners
         document.getElementById('addBtn').addEventListener('click', addTask);
         document.getElementById('taskInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addTask();
         });
 
-        // Make functions global
         window.toggleTask = toggleTask;
         window.deleteTask = deleteTask;
+        window.showAgenda = showAgenda;
+        window.showDetail = showDetail;
+        window.openSettings = openSettings;
+        window.closeSettings = closeSettings;
+        window.saveSettings = saveSettings;
 
         // Initialize
-        document.querySelector('.day-btn').classList.add('active');
-        updateDateDisplay();
-        renderTasks();
+        loadSettings();
+        loadAllDaysRealtime();
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => {
+                console.log('Service Worker registratie mislukt:', err);
+            });
+        }
     </script>
 </body>
 </html>
