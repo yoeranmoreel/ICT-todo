@@ -97,6 +97,13 @@
   .agebadge.old{color:#fff; background:var(--q1);}
   .del{background:none;border:none;color:#b8ac8f;cursor:pointer;font-size:1em;line-height:1;padding:0.1em 0.3em;flex-shrink:0;}
   .del:hover{color:#c4622d;}
+  .handle{
+    cursor:grab; touch-action:none; color:#c9c2ad; font-size:1.05em;
+    padding:0 0.25em; flex-shrink:0; user-select:none; line-height:1.4;
+  }
+  .handle:active{cursor:grabbing;}
+  li.item.dragging{opacity:0.4;}
+  li.item.sortable{cursor:default;}
 
   .addrow{display:flex; gap:0.5em; margin-top:0.6em;}
   .addrow input[type="text"]{
@@ -414,8 +421,55 @@ function renderQuarters(){
   });
 }
 
-// ---------- generieke "open blijft staan"-lijst (dag/week) ----------
-function renderOpenList({ listKey, listEl, progressEl, ageLabelFn, doneStampKey, todayStampFn, createdKey }){
+// ---------- generieke "open blijft staan"-lijst (dag/week), handmatig sleepbaar ----------
+function getDragAfterElement(container, y){
+  const els = [...container.querySelectorAll('li.item:not(.dragging)')];
+  return els.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height/2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: -Infinity, element: null }).element;
+}
+
+function commitReorder(listKey, newOrderIdxs, onRender){
+  const all = state[listKey];
+  const visibleIdxSet = new Set(newOrderIdxs);
+  const hiddenItems = all.filter((_, i) => !visibleIdxSet.has(i));
+  const newVisibleItems = newOrderIdxs.map(i => all[i]);
+  state[listKey] = [...newVisibleItems, ...hiddenItems];
+  queueSave();
+  onRender();
+}
+
+function makeSortable(ul, listKey, onRender){
+  ul.querySelectorAll('li.item').forEach((li) => {
+    const handle = li.querySelector('.handle');
+    if (!handle) return;
+    handle.onpointerdown = (e) => {
+      e.preventDefault();
+      li.classList.add('dragging');
+      handle.setPointerCapture(e.pointerId);
+
+      handle.onpointermove = (ev) => {
+        const afterEl = getDragAfterElement(ul, ev.clientY);
+        if (afterEl == null) ul.appendChild(li);
+        else ul.insertBefore(li, afterEl);
+      };
+
+      handle.onpointerup = (ev) => {
+        handle.releasePointerCapture(ev.pointerId);
+        li.classList.remove('dragging');
+        handle.onpointermove = null;
+        handle.onpointerup = null;
+        const newOrderIdxs = Array.from(ul.querySelectorAll('li.item')).map(el => parseInt(el.dataset.idx, 10));
+        commitReorder(listKey, newOrderIdxs, onRender);
+      };
+    };
+  });
+}
+
+function renderOpenList({ listKey, listEl, progressEl, ageLabelFn, doneStampKey, todayStampFn, createdKey, onRender }){
   const ul = document.getElementById(listEl);
   const progress = document.getElementById(progressEl);
   ul.innerHTML = '';
@@ -423,7 +477,8 @@ function renderOpenList({ listKey, listEl, progressEl, ageLabelFn, doneStampKey,
   const all = state[listKey] || [];
   const today = todayStampFn();
   // zichtbaar: nog niet afgevinkt, óf vandaag/deze periode afgevinkt (voor visuele feedback)
-  const visible = all.filter(t => !t.done || t[doneStampKey] === today);
+  // volgorde: zoals opgeslagen (handmatig te verslepen), niet automatisch gesorteerd
+  const visible = all.map((t, i) => ({ item:t, idx:i })).filter(({item}) => !item.done || item[doneStampKey] === today);
   const openCount = all.filter(t => !t.done).length;
 
   progress.textContent = openCount === 0 ? 'alles afgerond' : `${openCount} openstaand`;
@@ -436,14 +491,16 @@ function renderOpenList({ listKey, listEl, progressEl, ageLabelFn, doneStampKey,
     return;
   }
 
-  // oudste (langst openstaand) bovenaan
-  const sorted = visible.map((t, i) => ({...t, _idx: all.indexOf(t)}))
-    .sort((a,b) => (a[createdKey] < b[createdKey] ? -1 : 1));
-
-  sorted.forEach(item=>{
-    const idx = item._idx;
+  visible.forEach(({item, idx})=>{
     const li = document.createElement('li');
-    li.className = 'item' + (item.done ? ' done' : '');
+    li.className = 'item sortable' + (item.done ? ' done' : '');
+    li.dataset.idx = idx;
+
+    const handle = document.createElement('span');
+    handle.className = 'handle';
+    handle.textContent = '⠿';
+    handle.title = 'Sleep om te herschikken';
+
     const cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.checked = item.done;
@@ -474,24 +531,29 @@ function renderOpenList({ listKey, listEl, progressEl, ageLabelFn, doneStampKey,
       renderAll();
     };
 
+    li.appendChild(handle);
     li.appendChild(cb);
     li.appendChild(label);
     if (!item.done) li.appendChild(badge);
     li.appendChild(del);
     ul.appendChild(li);
   });
+
+  makeSortable(ul, listKey, onRender);
 }
 
 function renderDag(){
   renderOpenList({
     listKey:'dagtaken', listEl:'dag-list', progressEl:'dag-progress',
-    ageLabelFn: dayAgeLabel, doneStampKey:'doneDay', todayStampFn: todayStr, createdKey:'createdDay'
+    ageLabelFn: dayAgeLabel, doneStampKey:'doneDay', todayStampFn: todayStr, createdKey:'createdDay',
+    onRender: renderDag
   });
 }
 function renderWeek(){
   renderOpenList({
     listKey:'weektaken', listEl:'week-list', progressEl:'week-progress',
-    ageLabelFn: weekAgeLabel, doneStampKey:'doneWeek', todayStampFn: isoWeekKey, createdKey:'createdWeek'
+    ageLabelFn: weekAgeLabel, doneStampKey:'doneWeek', todayStampFn: isoWeekKey, createdKey:'createdWeek',
+    onRender: renderWeek
   });
 }
 

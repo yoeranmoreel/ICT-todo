@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ict-planner-v2';
+const CACHE_NAME = 'ict-planner-v3';
 const APP_SHELL = [
   './',
   './index.html',
